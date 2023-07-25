@@ -1,5 +1,4 @@
 import ast
-import sys
 from itertools import chain
 from typing import Any, Generator, Iterator, List, Tuple, Type
 
@@ -32,7 +31,7 @@ class Visitor(ast.NodeVisitor):
 
 class Plugin:
     name = __name__
-    version = '0.1.0'
+    version = '0.1.2'
 
     def __init__(self, tree: ast.AST) -> None:
         self._tree = tree

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='flake8_private_name_import',
-    version='0.1.0',
+    version='0.1.2',
     description="flake8 plugin that reports imports of private names",
     long_description="flake8 plugin that reports imports of private names",
     # Get more from https://pypi.org/classifiers/
@@ -35,7 +35,7 @@ setup(
     include_package_data=True,
     test_suite='run_tests',
     zip_safe=False,
-    install_requires=['flake8'],
+    install_requires=['flake8 >= 3.3.0'],
     extras_require={
         'test': [
             'pytest',

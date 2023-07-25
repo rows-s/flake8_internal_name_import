@@ -4,6 +4,7 @@ from typing import Set, Tuple
 
 from flake8_private_name_import import Plugin
 
+
 @dataclasses.dataclass
 class TstCase:
     code: str
