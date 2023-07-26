@@ -2,10 +2,18 @@ import ast
 from itertools import chain
 from typing import Any, Generator, Iterator, List, Tuple, Type
 
+SKIP_NAMES = ('__future__',)
+
 
 class Visitor(ast.NodeVisitor):
-    def __init__(self) -> None:
+    def __init__(self, tree: ast.AST, file_name: str) -> None:
+        self.tree = tree
+        self.file_name = file_name
         self.reports: List[Tuple[int, int, str]] = []
+
+    def run(self) -> Iterator[Tuple[int, int, str]]:
+        self.visit(self.tree)
+        yield from iter(self.reports)
 
     def visit_Import(self, node: ast.Import) -> None:
         self._report_names(
@@ -25,7 +33,7 @@ class Visitor(ast.NodeVisitor):
         self.reports.extend(
             (line_num, col_num, f'PNI001 found import of private name: {name}')
             for name in names
-            if name.startswith('_')
+            if name.startswith('_') and name not in SKIP_NAMES
         )
 
 
@@ -33,11 +41,8 @@ class Plugin:
     name = __name__
     version = '0.1.2'
 
-    def __init__(self, tree: ast.AST) -> None:
-        self._tree = tree
+    def __init__(self, tree: ast.AST, filename: str) -> None:
+        self._visitor = Visitor(tree=tree, file_name=filename)
 
     def run(self) -> Generator[Tuple[int, int, str, Type[Any]], None, None]:
-        visitor = Visitor()
-        visitor.visit(self._tree)
-        for line_num, col_num, msg in visitor.reports:
-            yield line_num, col_num, msg, type(self)
+        yield from ((line_num, col_num, msg, type(self)) for line_num, col_num, msg in self._visitor.run())
