@@ -43,7 +43,7 @@ class Visitor(ast.NodeVisitor):
 
 class Plugin:
     name = __name__
-    version = '0.1.2'
+    version = '0.1.3'
 
     def __init__(self, tree: ast.AST, filename: str) -> None:
         self._visitor = Visitor(tree=tree, file_name=filename)
