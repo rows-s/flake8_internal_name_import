@@ -1,8 +1,10 @@
 import ast
+import re
 from itertools import chain
 from typing import Any, Generator, Iterator, List, Tuple, Type
 
 SKIP_NAMES = ('__future__',)
+TEST_PATH_PATTERN = re.compile('/test|test[/.]')  # directory or file name starts or ends with 'test'
 
 
 class Visitor(ast.NodeVisitor):
@@ -12,6 +14,8 @@ class Visitor(ast.NodeVisitor):
         self.reports: List[Tuple[int, int, str]] = []
 
     def run(self) -> Iterator[Tuple[int, int, str]]:
+        if TEST_PATH_PATTERN.search(self.file_name):
+            return
         self.visit(self.tree)
         yield from iter(self.reports)
 

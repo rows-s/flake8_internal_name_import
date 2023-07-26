@@ -25,7 +25,7 @@ class TestCase:
     __test__: ClassVar[bool] = False
 
     code: str
-    file_name: str = 'main.py'
+    file_name: str = './main.py'
     expected_results: Set[PluginResult] = dataclasses.field(default_factory=set)
 
 
@@ -41,6 +41,10 @@ VALID_CASES = (
 
 SKIP_CASES = (
     TestCase(code='from __future__ import annotations'),
+    TestCase(code='import _private', file_name='./main_test.py'),
+    TestCase(code='import _private', file_name='./test_main.py'),
+    TestCase(code='import _private', file_name='./main_test/conf.py'),
+    TestCase(code='import _private', file_name='./test_main/conf.py'),
 )
 
 INVALID_CASES = (
