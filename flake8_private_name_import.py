@@ -48,7 +48,7 @@ class Visitor(ast.NodeVisitor):
 
 class Plugin:
     name = __name__
-    version = '0.1.4'
+    version = '0.1.5'
 
     skip_names = {}
     skip_modules = {}
@@ -62,12 +62,14 @@ class Plugin:
             '--private-name-import-skip-names',
             dest='private_name_import_skip_names',
             comma_separated_list=True,
+            default=(),
             help='Comma separated private names import of which must not be reported.'
         )
         add_option(
             '--private-name-import-skip-modules',
             dest='private_name_import_skip_modules',
             comma_separated_list=True,
+            default=(),
             help='Comma separated private modules import of which must not be reported.'
         )
         add_option(

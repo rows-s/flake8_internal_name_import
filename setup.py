@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='flake8_private_name_import',
-    version='0.1.4',
+    version='0.1.5',
     description="flake8 plugin that reports imports of private names",
     long_description="flake8 plugin that reports imports of private names",
     # Get more from https://pypi.org/classifiers/
