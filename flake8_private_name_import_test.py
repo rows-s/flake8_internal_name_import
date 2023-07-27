@@ -77,7 +77,8 @@ INVALID_CASES = (
 )
 
 SKIP_CASES = (
-    TestCase('from __custom__ import annotations'),  # dunder is not treated as private
+    TestCase('from module import __custom__'),  # dunder is not treated as private
+    TestCase('from __custom__ import function'),  # dunder is not treated as private
     TestCase('import _module', file_name='./main_test.py'),  # skip if FILE ENDS with 'test'
     TestCase('import _module', file_name='./test_main.py'),  # skip if FILE STARTS with 'test'
     TestCase('import _module', file_name='./pytest_main.py'),  # skip if FILE STARTS with 'pytest'
@@ -131,5 +132,5 @@ def _get_plugin_reports(test_case: TestCase) -> Iterator[str]:
 
 
 def test_empty_config():
-    """add_options must specify all options with a default value"""
+    """Plugin.add_options must specify all options with a default value"""
     Plugin.parse_options(CONFIG_PARSER.parse_args([])[0])  # test is valid while `parse_options` accesses all attributes

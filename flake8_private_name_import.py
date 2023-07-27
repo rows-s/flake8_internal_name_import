@@ -62,16 +62,13 @@ class Plugin:
             '--private-name-import-skip-names',
             dest='private_name_import_skip_names',
             comma_separated_list=True,
-            help=(
-                'Comma separated private names import of which must not be reported.\n'
-                'Example: --private-name-import-skip-names=_my_func,_MyClass'
-            ),
+            help='Comma separated private names import of which must not be reported.'
         )
         add_option(
             '--private-name-import-skip-modules',
             dest='private_name_import_skip_modules',
             comma_separated_list=True,
-            parse_from_config=True,
+            help='Comma separated private modules import of which must not be reported.'
         )
         add_option(
             '--private-name-import-skip-relative',
@@ -86,7 +83,7 @@ class Plugin:
             action='store_true',
             default=False,
             help='By default, imports of private names in test directories/files are not reported.\n'
-                 'With this option they will be reported.'
+                 'This option turn the feature off (test files and folders will be checked for private imports).'
         )
 
     @classmethod
