@@ -1,7 +1,7 @@
 # flake8_private_name_import
 flake8 plugin that reports imports of private names. 
 
-# codes
+# Codes
 
 <details>
   <summary>PNI001 found import of private name: {name}</summary>
@@ -31,7 +31,7 @@ flake8 plugin that reports imports of private names.
 
 # Options
 
-### Skip names (PNI001)
+### Skip names (`PNI001`)
 
 `console`: --private-name-import-skip-names  
 `config_file`: private_name_import_skip_names  
@@ -67,7 +67,7 @@ If plain name used then name would be skipped independent on module it imported 
   ```
 </details>
 
-### Skip modules (PNI002)
+### Skip modules (`PNI002`)
 
 `console`: --private-name-import-skip-modules  
 `config_file`: private_name_import_skip_modules  
@@ -89,7 +89,7 @@ Affects only imports of modules, imports of names from those modules will be rep
   ```
 </details>
 
-### Skip names from modules (PNI003, PNI001)
+### Skip names from modules (`PNI003`, `PNI001`)
 
 `console`: --private-name-import-skip-names-from-modules  
 `config_file`: private_name_import_skip_names_from_modules  
@@ -136,7 +136,7 @@ When option used, relative imports will not be reported
 By default, imports in test directories/files are not reported.  
 This option turn the feature off (test files and folders will be checked for private imports).
 
-### Skip test files and folders
+### Skip `TYPE_CHECKING`
 
 `console`: --private-name-import-dont-skip-type-checking  
 `config_file`: private_name_import_dont_skip_type_checking  
