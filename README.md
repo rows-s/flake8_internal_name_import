@@ -9,6 +9,7 @@ flake8 plugin that reports imports of private names.
   ```python
   from module import _my_private_name  # PNI001 found import of private name: _my_private_name
   ```
+
 </details>
 
 <details>
@@ -18,6 +19,7 @@ flake8 plugin that reports imports of private names.
   import _module  # PNI002 found import of private module: _module
   import module._sub_module  # PNI002 found import of private module: module._sub_module
   ```
+
 </details>
 
 <details>
@@ -27,6 +29,7 @@ flake8 plugin that reports imports of private names.
   from _module import name  # PNI003 found import from private module: _module
   from module._sub_module import name  # PNI003 found import from private module: module._sub_module
   ```
+
 </details>
 
 # Options
@@ -45,26 +48,30 @@ If plain name used then name would be skipped independent on module it imported 
 <details>
   <summary>Example (specific name from specific module)</summary>
   
-  ```
+  ```text
   flake8 --private-name-import-skip-names=module.sub_module._function,module.sub_module._Class
   ```
+
   ```python
   from module.sub_module import _function, _Class  # both skipped
   from module.sub_module import _CONSTANT  # PNI001 found import of private name: _CONSTANT
   ```
+
 </details>
 
 <details>
   <summary>Example (module independent name)</summary>
   
-  ```
+  ```text
   flake8 --private-name-import-skip-names=_function,_Class
   ```
+
   ```python
   from module import _function, _Class  # both skipped
   from module.sub_module import _function, _Class  # both skipped
   from module.sub_module import _CONSTANT  # PNI001 found import of private name: _CONSTANT
   ```
+
 </details>
 
 ### Skip modules (`PNI002`)
@@ -79,14 +86,16 @@ Affects only imports of modules, imports of names from those modules will be rep
 <details>
   <summary>Example</summary>
   
-  ```
+  ```text
   flake8 --private-name-import-skip-modules=_module,module._sub_module
   ```
+
   ```python
   import _module  # skipped
   import module._sub_module  # skipped
   from _module import name  # PNI003 found import from private module: _module
   ```
+
 </details>
 
 ### Skip names from modules (`PNI003`, `PNI001`)
@@ -101,14 +110,16 @@ Affects only imports of names from those modules, imports of modules will be rep
 <details>
   <summary>Example</summary>
   
-  ```
+  ```text
   flake8 --private-name-import-skip-names-from-modules=_module,module._sub_module
   ```
+
   ```python
   from _module import name  # skipped
   from module._sub_module import _name  # skipped (both private module and private name)
   import _module  # PNI002 found import of private module: _module
   ```
+
 </details>
 
 ### Skip local imports
