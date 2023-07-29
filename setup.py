@@ -4,7 +4,7 @@ setup(
     name='flake8_private_name_import',
     version='1.0.0',
     description="flake8 plugin that reports imports of private names",
-    long_description=open('README.txt').read(),
+    long_description=open('README.md').read(),
     # Get more from https://pypi.org/classifiers/
     classifiers=[
         'Development Status :: 5 - Production/Stable',
