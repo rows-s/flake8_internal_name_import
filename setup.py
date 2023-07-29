@@ -1,10 +1,16 @@
 from setuptools import setup
 
+long_description = """\
+Flake8 plugin that reports imports of private names.
+
+Please visit github for codes, options and examples: https://github.com/rows-s/flake8_private_name_import
+"""
+
 setup(
     name='flake8_private_name_import',
     version='1.0.0',
     description="flake8 plugin that reports imports of private names",
-    long_description=open('README.md').read(),
+    long_description=long_description,
     # Get more from https://pypi.org/classifiers/
     classifiers=[
         'Development Status :: 5 - Production/Stable',
