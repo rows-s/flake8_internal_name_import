@@ -109,7 +109,7 @@ class Visitor:
 
 class Plugin:
     name = __name__
-    version = '0.1.5'
+    version = '1.0.0'
 
     global_skip_names: Set[str] = {}
     """Names that must be skipped independent of module"""
