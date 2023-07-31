@@ -1,15 +1,15 @@
 from setuptools import setup
 
 long_description = """\
-Flake8 plugin that reports imports of private names.
+Flake8 plugin that reports imports of internal names.
 
-Please visit github for codes, options and examples: https://github.com/rows-s/flake8_private_name_import
+Visit github for codes, options and examples: https://github.com/rows-s/flake8_internal_name_import
 """
 
 setup(
-    name='flake8_private_name_import',
+    name='flake8_internal_name_import',
     version='1.0.0',
-    description="flake8 plugin that reports imports of private names",
+    description="flake8 plugin that reports imports of internal names",
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/
     classifiers=[
@@ -32,14 +32,14 @@ setup(
         'Topic :: Software Development :: Quality Assurance',
     ],
     python_requires='>=3.7',
-    keywords='python pep8 flake8 private import',
+    keywords='python pep8 flake8 internal import',
     author='Vladimir Marmuz',
     author_email='vladimir.rows@gmail.com',
-    url='https://github.com/rows-s/flake8_private_name_import',
+    url='https://github.com/rows-s/flake8_internal_name_import',
     license='MIT',
-    py_modules=['flake8_private_name_import'],
+    py_modules=['flake8_internal_name_import'],
     include_package_data=True,
-    test_suite='run_tests',
+    test_suite='pytest',
     zip_safe=False,
     install_requires=['flake8 >= 3.3.0'],
     extras_require={
@@ -49,7 +49,7 @@ setup(
     },
     entry_points={
         'flake8.extension': [
-            'PNI00 = flake8_private_name_import:Plugin',
+            'PNI00 = flake8_internal_name_import:Plugin',
         ],
     },
 )
