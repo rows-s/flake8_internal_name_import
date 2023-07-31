@@ -22,11 +22,15 @@ this plugin is probably what you are looking for.
 - Most of the time you would import name in top of the module.
 - Less of the time imports will be under if-else-statements (as example - `if sys.version_info`) 
 - Even less they will be placed in try-except blocks (`ImportError` usually)
-- But if package dependencies was broken into a circular imports, you will use them locally (within functions). 
+- But if package dependencies was broken into a circular imports, you will use them locally (within functions).
 
 Trying to cover these cases, plugin looks for:
 - Module-level imports including `if-elif-else` and `try-except-else-finally` statements with any nesting-level.
 - Local imports, but only first-indent level of them, if import places in function and under an `if` it will be skipped.
+
+But skips:
+- Imports under `TYPE_CHECKING`. It must not harm your project while it's not used in production.
+- Imports in test files and directories; It ofthen required to test some internal parts of code.
 
 # Codes
 
