@@ -1,6 +1,12 @@
 # flake8_internal_name_import
 flake8 plugin that reports imports of internal names.
 
+# Installation
+
+```text
+pip install flake8_intenal_name_import
+```
+
 # Purpose
 
 Developers mark they code as internal with leading underscore 
