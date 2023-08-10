@@ -1,6 +1,12 @@
 # flake8_internal_name_import
 flake8 plugin that reports imports of internal names.
 
+# Installation
+
+```text
+pip install flake8_intenal_name_import
+```
+
 # Purpose
 
 Developers mark they code as internal with leading underscore 
@@ -9,7 +15,7 @@ high usability and backward compatibility.
 
 And so you must avoid usage of internal interfaces finding another solution if it is possible. 
 But if some member of your team do not follow the rule and keep importing internal names, 
-this plugin is probably what you are looking for.  
+this plugin is probably what you are looking for.
 
 # Codes
 
