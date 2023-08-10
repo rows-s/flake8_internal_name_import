@@ -15,57 +15,77 @@ high usability and backward compatibility.
 
 And so you must avoid usage of internal interfaces finding another solution if it is possible. 
 But if some member of your team do not follow the rule and keep importing internal names, 
-this plugin is probably what you are looking for.  
-
-# Where does plugin look for imports
-
-- Most of the time you would import name in top of the module.
-- Less of the time imports will be under if-else-statements (as example - `if sys.version_info`) 
-- Even less they will be placed in try-except blocks (`ImportError` usually)
-- But if package dependencies was broken into a circular imports, you will use them locally (within functions).
-
-Trying to cover these cases, plugin looks for:
-- Module-level imports including `if-elif-else` and `try-except-else-finally` statements with any nesting-level.
-- Local imports, but only first-indent level of them, if import places in function and under an `if` it will be skipped.
-
-But skips:
-- Imports under `TYPE_CHECKING`. It must not harm your project while it's not used in production.
-- Imports in test files and directories; It ofthen required to test some internal parts of code.
+this plugin is probably what you are looking for.
 
 # Codes
 
 <details>
-  <summary>PNI001 found import of internal name: {name}</summary>
+  <summary>INI001 found import of internal name: {name}</summary>
 
   ```python
-  from module import _my_internal_name  # PNI001 found import of internal name: _my_internal_name
+  from module import _my_internal_name  # INI001 found import of internal name: _my_internal_name
   ```
 
 </details>
 
 <details>
-  <summary>PNI002 found import of internal module: {module}</summary>
+  <summary>INI002 found import of internal module: {module}</summary>
 
   ```python
-  import _module  # PNI002 found import of internal module: _module
-  import module._sub_module  # PNI002 found import of internal module: module._sub_module
+  import _module  # INI002 found import of internal module: _module
+  import module._sub_module  # INI002 found import of internal module: module._sub_module
   ```
 
 </details>
 
 <details>
-  <summary>PNI003 found import from internal module: {module}</summary>
+  <summary>INI003 found import from internal module: {module}</summary>
 
   ```python
-  from _module import name  # PNI003 found import from internal module: _module
-  from module._sub_module import name  # PNI003 found import from internal module: module._sub_module
+  from _module import name  # INI003 found import from internal module: _module
+  from module._sub_module import name  # INI003 found import from internal module: module._sub_module
   ```
 
 </details>
+
+# Plugin skips some code
+
+Skips test files:
+- It is often necessary to import internal name to properly test code.
+- It will never hurt you project if test fail after update of used internal interfaces.
+
+Skips TYPE_CHECKING:
+- It's fine to use internal names only for annotations.
+
+Plugin has optional skips:
+- [Relative imports](#skip-relative-imports)
+- [Local imports](#skip-local-imports)
+
+# How to deal with relative imports
+
+Plugin is not smart enough to realize that `from module.sub_module` and `from .sub_module` 
+are import from the same module and so if you skip imports from one module using [skip-names](#skip-names-ini001) or
+[skip-names-from-modules](#skip-names-from-modules-ini003-ini001) another import will be reported by Plugin.  
+It possible to make Plugin smart enough to realize that but for now it seems unnecessary because:
+- It must not be common case and developers should prefer absolute imports.
+- That knowledge would apply only for skips of names or modules but if it causes that much pain 
+  you would rather turn Plugin off for any relative imports.
+
+Imagine you have `utils` module that contains names which must be used only within that package,
+and so they marked as internal and imported as `from .utils import _name`.  
+And if you want to keep that strategy but also use the Plugin you have some options:
+- Skip names or module as they imported if you have not that many names or modules. 
+  And be aware that it applies for any modules with the same name and import depth: 
+  - `internal_name_import_skip_names = ['.utils._name']`
+  - `internal_name_import_skip_names_from_modules = ['.utils']`
+- Or skip relative import at all:
+  - `internal_name_import_skip_relative = true`
+- Do not use relative imports:
+  - Use linter to fix it for you. For example [absolufy-imports](https://github.com/MarcoGorelli/absolufy-imports) 
 
 # Options
 
-### Skip names (`PNI001`)
+### Skip names (`INI001`)
 
 `console`: --internal-name-import-skip-names  
 `config_file`: internal_name_import_skip_names  
@@ -88,7 +108,7 @@ Relative modules must be specified as they imported (`.module`, `..module`)
   ```python
   from module.sub_module import _function, _Class  # both skipped
   # `_CONSTANT` was not specified to be skipped from the module 
-  from module.sub_module import _CONSTANT  # PNI001 found import of internal name: _CONSTANT
+  from module.sub_module import _CONSTANT  # INI001 found import of internal name: _CONSTANT
   ```
 
 </details>
@@ -107,7 +127,7 @@ Relative modules must be specified as they imported (`.module`, `..module`)
 
 </details>
 
-### Skip modules (`PNI002`)
+### Skip modules (`INI002`)
 
 `console`: --internal-name-import-skip-modules  
 `config_file`: internal_name_import_skip_modules  
@@ -129,12 +149,12 @@ Relative modules must be specified as they imported (`.module`, `..module`)
   import _module  # skipped
   import module._sub_module  # skipped
   # but imports of names from the module will be reported
-  from _module import name  # PNI003 found import from internal module: _module
+  from _module import name  # INI003 found import from internal module: _module
   ```
 
 </details>
 
-### Skip names from modules (`PNI003`, `PNI001`)
+### Skip names from modules (`INI003`, `INI001`)
 
 `console`: --internal-name-import-skip-names-from-modules  
 `config_file`: internal_name_import_skip_names_from_modules  
@@ -154,7 +174,7 @@ Affects only imports of names from those modules, imports of modules will be rep
   from _module import name  # skipped
   from module._sub_module import _name  # skipped (both internal module and internal name)
   # but imports of the module will be reported
-  import _module  # PNI002 found import of internal module: _module
+  import _module  # INI002 found import of internal module: _module
   ```
 
 </details>
@@ -165,7 +185,7 @@ Affects only imports of names from those modules, imports of modules will be rep
 `config_file`: internal_name_import_skip_local  
 `type`: flag
  
-When option used, import inside functions will not be reported.
+When option used, import inside functions and methods will not be reported.
 
 ### Skip relative imports
 
@@ -174,11 +194,3 @@ When option used, import inside functions will not be reported.
 `type`: flag
 
 When option used, relative imports will not be reported.
-
-Plugin can't realize that `_module` and `._module` are the same module even if they are.
-If you skip one of them another will be reported.
-
-And it's common case when you have some in-package module 
-that shares internal names for in-package-only usage.  
-If you are in that case, you may either skip names and modules 
-or just disable plugin for relative imports. 

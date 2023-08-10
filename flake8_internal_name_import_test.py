@@ -21,20 +21,21 @@ SKIP_RELATIVE_CONFIG_STR = DEFAULT_CONFIG_STR + '--internal-name-import-skip-rel
 
 CODE_WITH_LOCAL_IMPORTS = """\
 def function():
-    import _module  # local imports in functions are reported only if config says to
+    import _module
     
     if True:
-        import _module  # never reported; only first indent-level of functions is checked for imports 
+        import _module  # nested statements must be checked
 
 class MyClass:
     def method(self):
-        import _module  # local imports in methods are reported only if config says to
-        
-        try:
-            import _module  # never reported; only first indent-level of functions is checked for imports 
-        finally:
-            import _module  # never reported; only first indent-level of functions is checked for imports
+        import _module
 """
+
+CODE_WITH_LOCAL_IMPORTS_REPORTS = {
+    '2:4: INI002 found import of internal module: _module',
+    '5:8: INI002 found import of internal module: _module',
+    '9:8: INI002 found import of internal module: _module',
+}
 
 
 @dataclasses.dataclass
@@ -89,101 +90,79 @@ VALID_CASES = (
 REPORT_CASES = (
     TestCase(
         'import _module',
-        {'1:0: PNI002 found import of internal module: _module'},
+        {'1:0: INI002 found import of internal module: _module'},
     ),
     TestCase(  # import of internal sub-modules that stay within public module must be reported
         'import module._sub_module',
-        {'1:0: PNI002 found import of internal module: module._sub_module'},
+        {'1:0: INI002 found import of internal module: module._sub_module'},
     ),
     TestCase(
         'from module import _function',
-        {'1:0: PNI001 found import of internal name: _function'},
+        {'1:0: INI001 found import of internal name: _function'},
     ),
     TestCase(
         'from module.sub_module import _function',
-        {'1:0: PNI001 found import of internal name: _function'},
+        {'1:0: INI001 found import of internal name: _function'},
     ),
     TestCase(
         'from module._sub_module import name',
-        {'1:0: PNI003 found import from internal module: module._sub_module'},
+        {'1:0: INI003 found import from internal module: module._sub_module'},
     ),
     TestCase(  # public names must not hide internal names
         'from module.sub_module import function, _Class',
-        {'1:0: PNI001 found import of internal name: _Class'},
+        {'1:0: INI001 found import of internal name: _Class'},
     ),
     TestCase(  # all names must be reported
         'from module.sub_module import _function, _Class',
         {
-            '1:0: PNI001 found import of internal name: _function',
-            '1:0: PNI001 found import of internal name: _Class',
+            '1:0: INI001 found import of internal name: _function',
+            '1:0: INI001 found import of internal name: _Class',
         },
     ),
     TestCase(  # only specific names are skipped (see DEFAULT_CONFIG_STR)
         'from module_for_skip_specific_name import _CONSTANT',
-        {'1:0: PNI001 found import of internal name: _CONSTANT'}
+        {'1:0: INI001 found import of internal name: _CONSTANT'}
     ),
     TestCase(  # 'test' in the middle of file name is not treated as test file
         'import _module',
-        {'1:0: PNI002 found import of internal module: _module'},
+        {'1:0: INI002 found import of internal module: _module'},
         file_name='./not_test_file.py',
     ),
     TestCase(  # 'test' in the middle of dir name is not treated as test file
         'import _module',
-        {'1:0: PNI002 found import of internal module: _module'},
+        {'1:0: INI002 found import of internal module: _module'},
         file_name='./not_test_dir/file.py',
     ),
     TestCase(  # relative imports are not skipped if config does not say to
         'from ._module._sub_module import _function',
         {
-            '1:0: PNI001 found import of internal name: _function',
-            '1:0: PNI003 found import from internal module: ._module._sub_module',
+            '1:0: INI001 found import of internal name: _function',
+            '1:0: INI003 found import from internal module: ._module._sub_module',
         },
     ),
-    TestCase(  # config does not say to skip local imports
-        CODE_WITH_LOCAL_IMPORTS,
-        {
-            '2:4: PNI002 found import of internal module: _module',
-            '9:8: PNI002 found import of internal module: _module',
-        },
+    TestCase(CODE_WITH_LOCAL_IMPORTS, CODE_WITH_LOCAL_IMPORTS_REPORTS),  # config does not say to skip local imports
+    TestCase(
+        'if True:\n    import _module',
+        {'2:4: INI002 found import of internal module: _module'}
     ),
-    TestCase(  # internal imports within module-level if-statements must be reported
-        'if True:\n'
-        '    import _module\n'
-        'elif False:\n'
-        '    import _module\n'
-        'else:\n'
-        '    if True:\n'
-        '        import _module\n'
-        '    else:\n'
-        '        import _module',
-        {
-            '2:4: PNI002 found import of internal module: _module',
-            '4:4: PNI002 found import of internal module: _module',
-            '7:8: PNI002 found import of internal module: _module',
-            '9:8: PNI002 found import of internal module: _module',
-         },
+    TestCase(
+        'with context:\n    import _module',
+        {'2:4: INI002 found import of internal module: _module'}
     ),
-    TestCase(  # internal imports within module-level try-except blocks must be reported
-        'try:\n'
-        '    import _module\n'
-        'except ImportError:\n'
-        '    import _module\n'
-        'except Exception:\n'
-        '    import _module\n'
-        'else:\n'
-        '    import _module\n'
-        'finally:\n'
-        '    try:\n'
-        '        import _module\n'
-        '    finally:\n'
-        '        import _module',
+    TestCase(
+        'while True:\n    import _module',
+        {'2:4: INI002 found import of internal module: _module'}
+    ),
+    TestCase(
+        'for _ in list:\n    import _module',
+        {'2:4: INI002 found import of internal module: _module'}
+    ),
+    TestCase(
+        'try:\n    import _module\nfinally:\n    import _module',
         {
-            '2:4: PNI002 found import of internal module: _module',
-            '4:4: PNI002 found import of internal module: _module',
-            '6:4: PNI002 found import of internal module: _module',
-            '11:8: PNI002 found import of internal module: _module',
-            '13:8: PNI002 found import of internal module: _module',
-         },
+            '2:4: INI002 found import of internal module: _module',
+            '4:4: INI002 found import of internal module: _module',
+        }
     ),
 )
 
@@ -202,8 +181,3 @@ def _get_plugin_reports(test_case: TestCase) -> Iterator[str]:
     Plugin.parse_options(CONFIG_PARSER.parse_args(test_case.config_str.split())[0])
     for line_num, col_num, msg, _ in Plugin(ast.parse(test_case.code), test_case.file_name).run():
         yield f'{line_num}:{col_num}: {msg}'
-
-
-def test_empty_config():
-    """Plugin.add_options must specify all options with a default value"""
-    Plugin.parse_options(CONFIG_PARSER.parse_args([])[0])  # test is valid while `parse_options` accesses all attributes

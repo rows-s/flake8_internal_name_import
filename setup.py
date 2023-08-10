@@ -8,7 +8,7 @@ Visit github for codes, options and examples: https://github.com/rows-s/flake8_i
 
 setup(
     name='flake8_internal_name_import',
-    version='1.0.0',
+    version='1.0.1',
     description="flake8 plugin that reports imports of internal names",
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/
@@ -49,7 +49,7 @@ setup(
     },
     entry_points={
         'flake8.extension': [
-            'PNI00 = flake8_internal_name_import:Plugin',
+            'INI00 = flake8_internal_name_import:Plugin',
         ],
     },
 )
